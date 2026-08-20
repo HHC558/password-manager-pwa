@@ -177,3 +177,8 @@ body {
   padding: 11px 18px; border-radius: 999px; font-size: 14px;
   z-index: 200; max-width: 86vw; text-align: center;
 }
+/* 安装引导 */
+.menu-item .mi-sub { margin-left: auto; font-size: 12px; color: #9ca3af; }
+.install-guide-title { font-size: 15px; font-weight: 600; color: #111827; margin: 10px 0 4px; }
+.install-guide { margin: 0 0 8px; padding-left: 18px; }
+.install-guide li { font-size: 14px; color: #4b5563; line-height: 1.7; }

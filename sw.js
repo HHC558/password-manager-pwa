@@ -1,5 +1,5 @@
 /* Service Worker：预缓存全部静态资源，离线可用 */
-var CACHE_NAME = 'pwvault-cache-v2';
+var CACHE_NAME = 'pwvault-cache-v3';
 var ASSETS = [
   './',
   './index.html',
@@ -11,10 +11,12 @@ var ASSETS = [
   './js/importer.js',
   './js/share.js',
   './js/selftest.js',
+  './js/install.js',
   './js/app.js',
   './manifest.json',
   './icons/icon-192.png',
-  './icons/icon-512.png'
+  './icons/icon-512.png',
+  './icons/icon-512-maskable.png'
 ];
 
 self.addEventListener('install', function (e) {
