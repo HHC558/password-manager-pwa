@@ -95,7 +95,7 @@ jobs:
         run: |
           export BUBBLEWRAP_KEYSTORE_PASSWORD="$(cat android/keystore-password.txt)"
           export BUBBLEWRAP_KEY_PASSWORD="$(cat android/key-password.txt)"
-          bubblewrap build
+          printf "Y\n" | bubblewrap build
 
       - name: List APK outputs
         run: |
