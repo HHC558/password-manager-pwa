@@ -78,8 +78,8 @@ jobs:
             "maskableIconUrl": "https://hhc558.github.io/password-manager-pwa/icons/icon-512-maskable.png",
             "monochromeIconUrl": "https://hhc558.github.io/password-manager-pwa/icons/icon-512-maskable.png",
             "splashScreenFadeOutDuration": 300,
-            "appVersion": "0",
-            "appVersionCode": 0,
+            "appVersion": "1",
+            "appVersionCode": 1,
             "fallbackType": "customtabs",
             "orientation": "portrait",
             "minSdkVersion": 24,
@@ -91,11 +91,14 @@ jobs:
           EOF
           cat twa-manifest.json
 
+      - name: Generate TWA project
+        run: bubblewrap update
+
       - name: Build APK with Bubblewrap
         run: |
           export BUBBLEWRAP_KEYSTORE_PASSWORD="$(cat android/keystore-password.txt)"
           export BUBBLEWRAP_KEY_PASSWORD="$(cat android/key-password.txt)"
-          printf "Y\n" | bubblewrap build
+          bubblewrap build
 
       - name: List APK outputs
         run: |
