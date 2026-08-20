@@ -45,17 +45,16 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p android
-          KS_PASS="ks$(date +%s)$RANDOM$RANDOM"
-          KP_PASS="kp$(date +%s)$RANDOM$RANDOM"
-          printf '%s' "$KS_PASS" > android/keystore-password.txt
-          printf '%s' "$KP_PASS" > android/key-password.txt
+          PASS="pw$(date +%s)$RANDOM$RANDOM"
+          printf '%s' "$PASS" > android/keystore-password.txt
+          printf '%s' "$PASS" > android/key-password.txt
           keytool -genkeypair -v \
             -keystore android/passwordmanager.keystore \
             -alias passwordmanager \
             -keyalg RSA -keysize 2048 -validity 10950 \
-            -storepass "$KS_PASS" -keypass "$KP_PASS" \
+            -storepass "$PASS" -keypass "$PASS" \
             -dname "CN=HHC558, OU=Personal, O=HHC558, L=Shanghai, ST=Shanghai, C=CN"
-          FP=$(keytool -list -v -keystore android/passwordmanager.keystore -storepass "$KS_PASS" -alias passwordmanager \
+          FP=$(keytool -list -v -keystore android/passwordmanager.keystore -storepass "$PASS" -alias passwordmanager \
                 | awk '/SHA256:/{print $2; exit}')
           echo "fingerprint=$FP" >> "$GITHUB_OUTPUT"
           echo "::notice::SHA256 fingerprint = $FP"
