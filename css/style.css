@@ -1,0 +1,179 @@
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  background: #e8ebf1;
+  color: #1f2937;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+}
+#app { max-width: 480px; margin: 0 auto; min-height: 100vh; background: #f5f6fa; position: relative; box-shadow: 0 0 24px rgba(0,0,0,.08); }
+.view { display: none; padding-bottom: 90px; }
+.view.active { display: block; }
+
+/* 顶栏 */
+.topbar {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px; padding-top: calc(14px + env(safe-area-inset-top));
+  background: #2563eb; color: #fff;
+  box-shadow: 0 1px 6px rgba(0,0,0,.12);
+}
+.topbar h1 { font-size: 19px; font-weight: 600; }
+.topbar-actions { display: flex; gap: 6px; }
+.topbar-spacer { width: 36px; }
+.icon-btn {
+  background: none; border: none; color: inherit; font-size: 20px;
+  width: 36px; height: 36px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; padding: 0;
+}
+.icon-btn:active { background: rgba(255,255,255,.2); }
+.icon-btn.small { width: 32px; height: 32px; font-size: 16px; flex-shrink: 0; }
+
+.content { padding: 16px; }
+
+/* 登录/设置卡片 */
+.auth-card {
+  padding: 40px 28px 32px;
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.app-logo { font-size: 56px; text-align: center; margin-bottom: 12px; }
+.auth-card h1 { text-align: center; font-size: 24px; margin-bottom: 6px; }
+.subtitle { text-align: center; color: #6b7280; font-size: 14px; margin-bottom: 26px; }
+.auth-links { display: flex; justify-content: space-between; margin-top: 18px; font-size: 14px; }
+.auth-links a { color: #2563eb; text-decoration: none; padding: 4px 0; }
+.question-text {
+  background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af;
+  border-radius: 10px; padding: 12px 14px; font-size: 15px; word-break: break-all;
+}
+
+/* 表单 */
+.field { margin-bottom: 16px; }
+.field label { display: block; font-size: 13px; color: #6b7280; margin-bottom: 6px; }
+.field input {
+  width: 100%; padding: 12px 14px; font-size: 16px;
+  border: 1px solid #d1d5db; border-radius: 10px; background: #fff; color: #1f2937;
+  outline: none;
+}
+.field input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.15); }
+.pw-row { display: flex; gap: 8px; align-items: center; }
+.pw-row input { flex: 1; min-width: 0; }
+.pw-row .icon-btn { background: #f3f4f6; color: #4b5563; }
+.field.readonly input { background: #f3f4f6; color: #6b7280; }
+
+/* 按钮 */
+.btn {
+  display: block; width: 100%; padding: 13px; font-size: 16px; font-weight: 600;
+  border: none; border-radius: 10px; cursor: pointer;
+}
+.btn.primary { background: #2563eb; color: #fff; }
+.btn.primary:active { background: #1d4ed8; }
+.btn.danger { background: #dc2626; color: #fff; }
+.btn.danger:active { background: #b91c1c; }
+.btn.ghost { background: transparent; color: #2563eb; }
+.btn.small { width: auto; padding: 8px 14px; font-size: 14px; }
+.btn.danger-text { color: #dc2626; }
+.btn.hidden { display: none; }
+.btn + .btn { margin-top: 12px; }
+
+/* 记录列表 */
+.record-list { display: flex; flex-direction: column; gap: 12px; }
+.record-card {
+  background: #fff; border-radius: 14px; padding: 14px 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+}
+.rc-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; gap: 10px; }
+.rc-platform { font-size: 17px; font-weight: 700; color: #111827; word-break: break-all; }
+.rc-time { font-size: 12px; color: #9ca3af; flex-shrink: 0; }
+.rc-row { display: flex; align-items: center; gap: 8px; margin-top: 5px; font-size: 15px; }
+.rc-label { color: #6b7280; flex-shrink: 0; }
+.rc-value { word-break: break-all; min-width: 0; }
+.rc-password { font-family: "SF Mono", Consolas, Menlo, monospace; word-break: break-all; }
+.rc-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 10px; }
+.empty { text-align: center; padding: 80px 20px; color: #9ca3af; }
+.empty-icon { font-size: 56px; margin-bottom: 12px; }
+.empty-title { font-size: 18px; color: #6b7280; }
+.empty-sub { font-size: 14px; margin-top: 6px; }
+
+/* 悬浮添加按钮 */
+.fab {
+  position: fixed; bottom: 24px; right: 24px;
+  width: 56px; height: 56px; border-radius: 50%;
+  background: #2563eb; color: #fff; font-size: 28px; border: none; line-height: 1;
+  box-shadow: 0 4px 12px rgba(37,99,235,.4); cursor: pointer; z-index: 20;
+}
+.fab:active { background: #1d4ed8; }
+
+/* 设置菜单 */
+.menu { background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+.menu-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 15px 16px; font-size: 16px; cursor: pointer;
+  border-bottom: 1px solid #f3f4f6;
+}
+.menu-item:last-child { border-bottom: none; }
+.menu-item:active { background: #f9fafb; }
+.menu-item.danger { color: #dc2626; }
+.about { text-align: center; color: #9ca3af; font-size: 13px; margin-top: 24px; line-height: 1.7; }
+
+/* 导入预览 */
+.legend { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.chip { padding: 5px 12px; border-radius: 999px; font-size: 13px; color: #fff; }
+.chip.blue { background: #2563eb; }
+.chip.green { background: #16a34a; }
+.chip.red { background: #dc2626; }
+.import-summary { background: #fff; border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; font-size: 14px; color: #374151; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+.import-preview-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+.ip-card { border-radius: 12px; padding: 12px 14px; border-left: 6px solid; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+.ip-card.add { border-left-color: #2563eb; background: #eff6ff; }
+.ip-card.mod { border-left-color: #16a34a; background: #f0fdf4; }
+.ip-card.del { border-left-color: #dc2626; background: #fef2f2; }
+.ip-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; gap: 8px; }
+.ip-platform { font-weight: 700; font-size: 16px; word-break: break-all; }
+.ip-tag { font-size: 12px; padding: 2px 8px; border-radius: 999px; color: #fff; flex-shrink: 0; }
+.ip-card.add .ip-tag { background: #2563eb; }
+.ip-card.mod .ip-tag { background: #16a34a; }
+.ip-card.del .ip-tag { background: #dc2626; }
+.ip-row { font-size: 14px; margin-top: 4px; color: #374151; word-break: break-all; }
+.ip-row .ip-label { color: #6b7280; }
+.ip-row.del-line { text-decoration: line-through; color: #991b1b; }
+.ip-change { color: #16a34a; font-weight: 600; }
+.ip-old { color: #b91c1c; text-decoration: line-through; margin-right: 4px; }
+.ip-arrow { color: #6b7280; margin: 0 4px; }
+.import-actions { display: flex; gap: 10px; margin-top: 8px; position: sticky; bottom: 0; padding: 10px 0; background: #f5f6fa; }
+.import-actions .btn { flex: 1; }
+
+/* 自检 */
+.st-hint { color: #6b7280; font-size: 14px; margin-bottom: 14px; }
+.st-item { padding: 10px 12px; border-radius: 8px; margin-bottom: 8px; font-size: 14px; background: #fff; }
+.st-item.ok { color: #047857; }
+.st-item.fail { color: #b91c1c; background: #fef2f2; }
+.st-summary { font-weight: 700; margin-top: 12px; }
+.st-running { color: #6b7280; text-align: center; padding: 20px 0; }
+
+/* 弹窗 */
+.modal-mask[hidden] { display: none; }
+.modal-mask {
+  position: fixed; inset: 0; background: rgba(0,0,0,.45);
+  display: flex; align-items: center; justify-content: center; z-index: 100;
+  padding: 24px;
+}
+.modal {
+  width: 100%; max-width: 360px; background: #fff; border-radius: 14px; padding: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.2);
+}
+.modal h3 { font-size: 18px; margin-bottom: 10px; }
+.modal-msg { font-size: 15px; color: #4b5563; margin-bottom: 12px; }
+.modal-actions { display: flex; gap: 10px; margin-top: 8px; }
+.modal-actions .btn { flex: 1; }
+
+/* 轻提示 */
+.toast {
+  position: fixed; left: 50%; bottom: 84px; transform: translateX(-50%);
+  background: rgba(17,24,39,.92); color: #fff;
+  padding: 11px 18px; border-radius: 999px; font-size: 14px;
+  z-index: 200; max-width: 86vw; text-align: center;
+}

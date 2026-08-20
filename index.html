@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#2563eb">
+<meta name="mobile-web-app-capable" content="yes">
+<title>密码管家</title>
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- 首次设置 -->
+  <section id="view-setup" class="view">
+    <div class="auth-card">
+      <div class="app-logo">🔐</div>
+      <h1>首次设置</h1>
+      <p class="subtitle">设置登录密码与密保问题，数据仅加密保存在本机</p>
+      <div class="field"><label>登录密码（至少6位）</label><input type="password" id="setup-password" placeholder="请输入登录密码" autocomplete="off"></div>
+      <div class="field"><label>确认登录密码</label><input type="password" id="setup-password2" placeholder="再次输入登录密码" autocomplete="off"></div>
+      <div class="field"><label>密保问题</label><input id="setup-question" placeholder="如：我的小学名称？" autocomplete="off"></div>
+      <div class="field"><label>密保答案</label><input type="password" id="setup-answer" placeholder="用于忘记密码时重置" autocomplete="off"></div>
+      <button id="btn-setup" class="btn primary">完成设置</button>
+      <div class="auth-links"><a id="link-setup-import" href="javascript:void(0)">已有备份？从备份恢复</a></div>
+    </div>
+  </section>
+
+  <!-- 登录 -->
+  <section id="view-login" class="view">
+    <div class="auth-card">
+      <div class="app-logo">🔐</div>
+      <h1>密码管家</h1>
+      <p class="subtitle">请输入登录密码</p>
+      <div class="field"><input type="password" id="login-password" placeholder="登录密码" autocomplete="off"></div>
+      <button id="btn-login" class="btn primary">登 录</button>
+      <div class="auth-links">
+        <a id="link-forgot" href="javascript:void(0)">忘记密码？</a>
+        <a id="link-login-import" href="javascript:void(0)">从备份恢复</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 忘记密码 -->
+  <section id="view-forgot" class="view">
+    <div class="auth-card">
+      <div class="app-logo">🔑</div>
+      <h1>找回密码</h1>
+      <p class="subtitle">回答密保问题后可重置登录密码</p>
+      <div class="field"><label>密保问题</label><div id="forgot-question" class="question-text"></div></div>
+      <div class="field"><label>密保答案</label><input type="password" id="forgot-answer" placeholder="请输入密保答案" autocomplete="off"></div>
+      <div class="field"><label>新登录密码（至少6位）</label><input type="password" id="forgot-password" placeholder="请输入新密码" autocomplete="off"></div>
+      <div class="field"><label>确认新密码</label><input type="password" id="forgot-password2" placeholder="再次输入新密码" autocomplete="off"></div>
+      <button id="btn-forgot" class="btn primary">重置密码</button>
+      <div class="auth-links"><a id="link-back-login" href="javascript:void(0)">返回登录</a></div>
+    </div>
+  </section>
+
+  <!-- 记录列表 -->
+  <section id="view-list" class="view">
+    <header class="topbar">
+      <h1>密码管家</h1>
+      <div class="topbar-actions">
+        <button id="btn-share" class="icon-btn" title="导出/分享xlsx">📤</button>
+        <button id="btn-xlsx-import" class="icon-btn" title="导入xlsx">📥</button>
+        <button id="btn-settings" class="icon-btn" title="设置">⚙️</button>
+      </div>
+    </header>
+    <div class="content">
+      <div id="record-list" class="record-list"></div>
+      <div id="list-empty" class="empty" hidden>
+        <div class="empty-icon">🗂️</div>
+        <p class="empty-title">还没有记录</p>
+        <p class="empty-sub">点击右下角 ＋ 添加第一条账号密码</p>
+      </div>
+    </div>
+    <button id="btn-add" class="fab">＋</button>
+  </section>
+
+  <!-- 新增/编辑 -->
+  <section id="view-edit" class="view">
+    <header class="topbar">
+      <button id="btn-edit-back" class="icon-btn">←</button>
+      <h1 id="edit-title">新增记录</h1>
+      <span class="topbar-spacer"></span>
+    </header>
+    <div class="content">
+      <div class="form">
+        <div class="field"><label>平台名称 *</label><input id="edit-platform" placeholder="如：微信" autocomplete="off"></div>
+        <div class="field"><label>账号 *</label><input id="edit-account" placeholder="手机号 / 邮箱 / 用户名" autocomplete="off"></div>
+        <div class="field"><label>密码 *</label>
+          <div class="pw-row">
+            <input type="password" id="edit-password" placeholder="密码" autocomplete="off">
+            <button id="btn-edit-toggle" class="icon-btn small" type="button" title="显示/隐藏">👁</button>
+          </div>
+        </div>
+        <div class="field"><label>邮箱（选填）</label><input id="edit-email" placeholder="example@mail.com" autocomplete="off"></div>
+        <div class="field" id="edit-created-wrap" hidden><label>创建时间</label><input id="edit-created" readonly></div>
+        <button id="btn-save" class="btn primary">保 存</button>
+        <button id="btn-edit-delete" class="btn danger hidden">删 除</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 设置 -->
+  <section id="view-settings" class="view">
+    <header class="topbar">
+      <button id="btn-settings-back" class="icon-btn">←</button>
+      <h1>设置</h1>
+      <span class="topbar-spacer"></span>
+    </header>
+    <div class="content">
+      <div class="menu">
+        <div class="menu-item" id="mi-change-password"><span>🔑</span>修改登录密码</div>
+        <div class="menu-item" id="mi-change-question"><span>❓</span>修改密保问题</div>
+        <div class="menu-item" id="mi-export"><span>📦</span>导出备份</div>
+        <div class="menu-item" id="mi-import"><span>📥</span>导入备份</div>
+        <div class="menu-item" id="mi-selftest"><span>🧪</span>运行自检</div>
+        <div class="menu-item danger" id="mi-wipe"><span>🗑</span>清空所有数据</div>
+        <div class="menu-item" id="mi-logout"><span>🚪</span>退出登录</div>
+      </div>
+      <p class="about">密码管家 · 离线版 v1.0<br>数据仅加密保存在本机浏览器，无需联网</p>
+    </div>
+  </section>
+
+  <!-- 导入预览 -->
+  <section id="view-import" class="view">
+    <header class="topbar">
+      <button id="btn-import-back" class="icon-btn">←</button>
+      <h1>导入预览</h1>
+      <span class="topbar-spacer"></span>
+    </header>
+    <div class="content">
+      <div class="legend">
+        <span class="chip blue">蓝色：新增</span>
+        <span class="chip green">绿色：修改</span>
+        <span class="chip red">红色：删除</span>
+      </div>
+      <div id="import-summary" class="import-summary"></div>
+      <div id="import-preview-list" class="import-preview-list"></div>
+      <div class="import-actions">
+        <button id="btn-import-cancel" class="btn">取消导入</button>
+        <button id="btn-import-confirm" class="btn primary">确认导入</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 运行自检 -->
+  <section id="view-selftest" class="view">
+    <header class="topbar">
+      <button id="btn-selftest-back" class="icon-btn">←</button>
+      <h1>运行自检</h1>
+      <span class="topbar-spacer"></span>
+    </header>
+    <div class="content">
+      <p class="st-hint">自检使用独立测试空间，不会影响你的真实数据，结束后自动恢复。</p>
+      <div id="selftest-result"></div>
+      <button id="btn-selftest-run" class="btn primary">开始自检</button>
+    </div>
+  </section>
+
+</div>
+
+<!-- 弹窗 -->
+<div id="modal-mask" class="modal-mask" hidden>
+  <div class="modal">
+    <h3 id="modal-title"></h3>
+    <div id="modal-body"></div>
+    <div class="modal-actions">
+      <button id="modal-cancel" class="btn">取消</button>
+      <button id="modal-ok" class="btn primary">确定</button>
+    </div>
+  </div>
+</div>
+
+<!-- 轻提示 -->
+<div id="toast" class="toast" hidden></div>
+
+<!-- 备份文件选择 -->
+<input type="file" id="file-import" accept=".json,application/json" hidden>
+<input type="file" id="file-xlsx" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
+
+<script src="./js/crypto.js"></script>
+<script src="./js/storage.js"></script>
+<script src="./vendor/xlsx.full.min.js"></script>
+<script src="./js/xlsxio.js"></script>
+<script src="./js/importer.js"></script>
+<script src="./js/share.js"></script>
+<script src="./js/selftest.js"></script>
+<script src="./js/app.js"></script>
+</body>
+</html>
