@@ -151,7 +151,7 @@
 
       var shown = !!showState[r.id];
       var rows = [
-        { label: '账号', value: r.account, cls: 'rc-value' },
+        { label: '账号', value: r.account, cls: 'rc-value', copyable: true },
         { label: '密码', value: shown ? r.password : '••••••••', cls: 'rc-password', special: 'password' }
       ];
       if (r.email) rows.push({ label: '邮箱', value: r.email, cls: 'rc-value' });
@@ -185,6 +185,14 @@
             copy.addEventListener('click', function () { copyText(r.password); });
             row.appendChild(copy);
           }
+        }
+        if (line.copyable) {
+          var acopy = document.createElement('button');
+          acopy.className = 'icon-btn small';
+          acopy.textContent = '📋';
+          acopy.title = '复制' + line.label;
+          acopy.addEventListener('click', function () { copyText(line.value); });
+          row.appendChild(acopy);
         }
         card.appendChild(row);
       });

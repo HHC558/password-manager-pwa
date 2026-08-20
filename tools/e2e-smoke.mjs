@@ -76,10 +76,16 @@ try {
   await page.waitForTimeout(500);
   check('列表出现记录卡片', await page.locator('.record-card').count() === 1);
 
+  const acctCopyBtn = page.locator('.record-card [title="复制账号"]').first();
+  check('账号行有复制按钮', (await acctCopyBtn.count()) === 1);
+  await acctCopyBtn.click();
+  await page.waitForTimeout(150);
+  const toastTxt = await page.locator('#toast').textContent().catch(() => '');
+  check('点击复制账号出现提示', toastTxt.includes('已复制'), toastTxt);
   const masked = await page.locator('.rc-password').first().textContent();
   check('密码默认隐藏为圆点', masked.includes('••••'), JSON.stringify(masked));
 
-  await page.locator('.record-card .rc-row .icon-btn').first().click();
+  await page.locator('.record-card [title="显示密码"]').first().click();
   await page.waitForTimeout(200);
   const shown = await page.locator('.rc-password').first().textContent();
   check('点击眼睛显示密码', shown === 'wxPass123', JSON.stringify(shown));
