@@ -1,0 +1,115 @@
+name: Build Android APK (TWA)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK packages
+        run: |
+          sdkmanager --install "platform-tools" "platforms;android-34" "platforms;android-35" "build-tools;34.0.0" >/dev/null
+          yes | sdkmanager --licenses >/dev/null || true
+
+      - name: Configure Bubblewrap paths
+        run: |
+          mkdir -p ~/.bubblewrap
+          cat > ~/.bubblewrap/config.json <<EOF
+          {
+            "jdkPath": "${JAVA_HOME}",
+            "androidSdkPath": "${ANDROID_HOME}"
+          }
+          EOF
+
+      - name: Install Bubblewrap CLI
+        run: npm install -g @bubblewrap/cli@1.25.0
+
+      - name: Generate signing keystore
+        id: sign
+        run: |
+          set -euo pipefail
+          mkdir -p android
+          KS_PASS="ks$(date +%s)$RANDOM$RANDOM"
+          KP_PASS="kp$(date +%s)$RANDOM$RANDOM"
+          printf '%s' "$KS_PASS" > android/keystore-password.txt
+          printf '%s' "$KP_PASS" > android/key-password.txt
+          keytool -genkeypair -v \
+            -keystore android/passwordmanager.keystore \
+            -alias passwordmanager \
+            -keyalg RSA -keysize 2048 -validity 10950 \
+            -storepass "$KS_PASS" -keypass "$KP_PASS" \
+            -dname "CN=HHC558, OU=Personal, O=HHC558, L=Shanghai, ST=Shanghai, C=CN"
+          FP=$(keytool -list -v -keystore android/passwordmanager.keystore -storepass "$KS_PASS" -alias passwordmanager \
+                | awk '/SHA256:/{print $2; exit}')
+          echo "fingerprint=$FP" >> "$GITHUB_OUTPUT"
+          echo "::notice::SHA256 fingerprint = $FP"
+
+      - name: Write TWA manifest
+        run: |
+          cat > twa-manifest.json <<'EOF'
+          {
+            "packageId": "com.hhc558.passwordmanager",
+            "host": "hhc558.github.io",
+            "name": "密码管家",
+            "launcherName": "密码管家",
+            "display": "standalone",
+            "themeColor": "#2563eb",
+            "navigationColor": "#1f2937",
+            "backgroundColor": "#f5f6fa",
+            "enableNotifications": false,
+            "startUrl": "/password-manager-pwa/",
+            "iconUrl": "https://hhc558.github.io/password-manager-pwa/icons/icon-512.png",
+            "maskableIconUrl": "https://hhc558.github.io/password-manager-pwa/icons/icon-512-maskable.png",
+            "monochromeIconUrl": "https://hhc558.github.io/password-manager-pwa/icons/icon-512-maskable.png",
+            "splashScreenFadeOutDuration": 300,
+            "appVersion": "1.0.0",
+            "appVersionCode": 1,
+            "fallbackType": "customtabs",
+            "orientation": "portrait",
+            "minSdkVersion": 24,
+            "signingKey": {
+              "path": "android/passwordmanager.keystore",
+              "alias": "passwordmanager"
+            }
+          }
+          EOF
+          cat twa-manifest.json
+
+      - name: Build APK with Bubblewrap
+        run: |
+          export BUBBLEWRAP_KEYSTORE_PASSWORD="$(cat android/keystore-password.txt)"
+          export BUBBLEWRAP_KEY_PASSWORD="$(cat android/key-password.txt)"
+          bubblewrap build
+
+      - name: List APK outputs
+        run: |
+          find . -name "*.apk" -exec ls -la {} \;
+          find . -name "*.aab" -exec ls -la {} \; || true
+
+      - name: Upload APK + signing key
+        uses: actions/upload-artifact@v4
+        with:
+          name: passwordmanager-apk
+          path: |
+            app/build/outputs/apk/**/*.apk
+            android/passwordmanager.keystore
+            android/keystore-password.txt
+            android/key-password.txt
+            twa-manifest.json
+          if-no-files-found: error
